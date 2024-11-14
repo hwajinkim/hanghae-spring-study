@@ -1,5 +1,6 @@
 package com.hanghae.hanghaeStudy.entity;
 
+import com.hanghae.hanghaeStudy.dto.board.BoardRequestDto;
 import com.hanghae.hanghaeStudy.entity.common.BaseEntity;
 import jakarta.persistence.*;
 import lombok.Builder;
@@ -31,5 +32,14 @@ public class Board extends BaseEntity {
         this.user = user;
         this.title = title;
         this.content = content;
+    }
+
+    public static Board toEntity(BoardRequestDto boardRequestDto){
+        return new Board(boardRequestDto.getUser(), boardRequestDto.getTitle(), boardRequestDto.getContent());
+    }
+
+    public void updateBoard(BoardRequestDto boardRequestDto){
+        this.title = boardRequestDto.getTitle();
+        this.content = boardRequestDto.getContent();
     }
 }
