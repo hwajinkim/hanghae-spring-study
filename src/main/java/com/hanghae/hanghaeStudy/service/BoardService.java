@@ -4,6 +4,7 @@ import com.hanghae.hanghaeStudy.dto.board.BoardRequestDto;
 import com.hanghae.hanghaeStudy.dto.board.BoardResponseDto;
 import com.hanghae.hanghaeStudy.entity.Board;
 import com.hanghae.hanghaeStudy.entity.User;
+import com.hanghae.hanghaeStudy.exception.IncorrectPasswordException;
 import com.hanghae.hanghaeStudy.repository.BoardRepository;
 import com.hanghae.hanghaeStudy.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -46,15 +47,23 @@ public class BoardService {
     }
 
     @Transactional
-    public BoardResponseDto update(Long id, BoardRequestDto boardRequestDto) {
+    public BoardResponseDto update(Long id, BoardRequestDto boardRequestDto, String password) {
         Board board = boardRepository.findById(id).orElseThrow(RuntimeException::new);
+        if(!board.getUser().getPassword().equals(password)){
+            throw new IncorrectPasswordException("비밀번호가 일치하지 않습니다.");
+        }
+
         board.updateBoard(boardRequestDto);
         return BoardResponseDto.toDto(board);
     }
 
     @Transactional
-    public void delete(Long id) {
+    public void delete(Long id, String password) {
         Board board = boardRepository.findById(id).orElseThrow(RuntimeException::new);
+        if(!board.getUser().getPassword().equals(password)){
+            throw new IncorrectPasswordException("비밀번호가 일치하지 않습니다.");
+        }
+
         boardRepository.delete(board);
     }
 }

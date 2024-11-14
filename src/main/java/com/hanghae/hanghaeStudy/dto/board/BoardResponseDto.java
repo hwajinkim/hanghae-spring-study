@@ -1,15 +1,13 @@
 package com.hanghae.hanghaeStudy.dto.board;
 
 import com.hanghae.hanghaeStudy.entity.Board;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.Getter;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
 @Data
-@AllArgsConstructor(access = AccessLevel.PRIVATE)
+@AllArgsConstructor
+@NoArgsConstructor
 public class BoardResponseDto {
 
     private Long id;

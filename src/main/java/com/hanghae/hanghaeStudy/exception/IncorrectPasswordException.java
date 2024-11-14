@@ -1,0 +1,7 @@
+package com.hanghae.hanghaeStudy.exception;
+
+public class IncorrectPasswordException extends RuntimeException{
+    public IncorrectPasswordException(String message){
+        super(message);
+    }
+}

@@ -3,12 +3,13 @@ package com.hanghae.hanghaeStudy.entity;
 import com.hanghae.hanghaeStudy.dto.board.BoardRequestDto;
 import com.hanghae.hanghaeStudy.entity.common.BaseEntity;
 import jakarta.persistence.*;
+import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Getter
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 public class Board extends BaseEntity {
 

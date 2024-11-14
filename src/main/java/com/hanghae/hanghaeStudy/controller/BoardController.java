@@ -6,18 +6,19 @@ import com.hanghae.hanghaeStudy.entity.Board;
 import com.hanghae.hanghaeStudy.response.ApiResponse;
 import com.hanghae.hanghaeStudy.response.ResponseCode;
 import com.hanghae.hanghaeStudy.service.BoardService;
+import jakarta.servlet.http.HttpServletRequest;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
 @RequestMapping("/api")
+@RequiredArgsConstructor
 public class BoardController {
 
     private final BoardService boardService;
-    public BoardController(BoardService boardService) {
-        this.boardService = boardService;
-    }
 
     @GetMapping("/boards")
     public ApiResponse<List<BoardResponseDto>> getBoards(){
@@ -32,25 +33,29 @@ public class BoardController {
     }
 
     @PostMapping("/board")
-    public ApiResponse<BoardResponseDto> boardPost(@RequestBody BoardRequestDto boardRequestDto){
+    public ApiResponse<BoardResponseDto> boardPost(@RequestBody BoardRequestDto boardRequestDto, HttpServletRequest request){
         // header accessToken에서 읽어올 예정
-        String userName="hwajin";
+        String userName = request.getHeader("username");
 
         BoardResponseDto boardResponseDto = boardService.save(boardRequestDto,userName);
         return ApiResponse.success(ResponseCode.BOARD_CREATE_SUCCESS.getMessage(), boardResponseDto);
     }
 
     @PutMapping("/board/{id}")
-    public ApiResponse<BoardResponseDto> boardPut(@PathVariable("id") Long id, @RequestBody BoardRequestDto boardRequestDto){
-        BoardResponseDto boardResponseDto = boardService.update(id, boardRequestDto);
+    public ApiResponse<BoardResponseDto> boardPut(@PathVariable("id") Long id, @RequestBody BoardRequestDto boardRequestDto, HttpServletRequest request){
+        // header accessToken에서 읽어올 예정
+        String password = request.getHeader("password");
+
+        BoardResponseDto boardResponseDto = boardService.update(id, boardRequestDto, password);
         return ApiResponse.success(ResponseCode.BOARD_UPDATE_SUCCESS.getMessage(), boardResponseDto);
     }
 
     @DeleteMapping("/board/{id}")
-    public ApiResponse<BoardResponseDto> boardDelete(@PathVariable("id") Long id){
-        boardService.delete(id);
+    public ApiResponse<BoardResponseDto> boardDelete(@PathVariable("id") Long id, HttpServletRequest request){
+        // header accessToken에서 읽어올 예정
+        String password = request.getHeader("password");
+
+        boardService.delete(id, password);
         return ApiResponse.success(ResponseCode.BOARD_DELETE_SUCCESS.getMessage(), null);
     }
-
-
 }
