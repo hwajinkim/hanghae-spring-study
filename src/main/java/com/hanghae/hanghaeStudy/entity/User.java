@@ -1,5 +1,6 @@
 package com.hanghae.hanghaeStudy.entity;
 
+import com.hanghae.hanghaeStudy.dto.user.UserRequestDto;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -35,4 +36,7 @@ public class User {
         this.password = password;
     }
 
+    public static User toEntity(UserRequestDto userRequestDto){
+        return new User(userRequestDto.getUsername(), userRequestDto.getPassword());
+    }
 }
