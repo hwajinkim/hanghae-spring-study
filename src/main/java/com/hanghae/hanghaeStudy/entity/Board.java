@@ -29,14 +29,15 @@ public class Board extends BaseEntity {
     private String content;
 
     @Builder
-    public Board(User user, String title, String content){
+    public Board(Long id, User user, String title, String content){
+        this.id = id;
         this.user = user;
         this.title = title;
         this.content = content;
     }
 
     public static Board toEntity(BoardRequestDto boardRequestDto){
-        return new Board(boardRequestDto.getUser(), boardRequestDto.getTitle(), boardRequestDto.getContent());
+        return new Board(null, boardRequestDto.getUser(), boardRequestDto.getTitle(), boardRequestDto.getContent());
     }
 
     public void updateBoard(BoardRequestDto boardRequestDto){

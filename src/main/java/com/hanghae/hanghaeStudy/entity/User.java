@@ -31,12 +31,13 @@ public class User {
     private List<Board> boards = new ArrayList<>();
 
     @Builder
-    public User(String username, String password){
+    public User(Long id, String username, String password){
+        this.id = id;
         this.username = username;
         this.password = password;
     }
 
     public static User toEntity(UserRequestDto userRequestDto){
-        return new User(userRequestDto.getUsername(), userRequestDto.getPassword());
+        return new User(null, userRequestDto.getUsername(), userRequestDto.getPassword());
     }
 }

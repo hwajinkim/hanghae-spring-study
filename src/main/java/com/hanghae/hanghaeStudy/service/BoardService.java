@@ -4,7 +4,9 @@ import com.hanghae.hanghaeStudy.dto.board.BoardRequestDto;
 import com.hanghae.hanghaeStudy.dto.board.BoardResponseDto;
 import com.hanghae.hanghaeStudy.entity.Board;
 import com.hanghae.hanghaeStudy.entity.User;
+import com.hanghae.hanghaeStudy.exception.BoardSaveFailueException;
 import com.hanghae.hanghaeStudy.exception.IncorrectPasswordException;
+import com.hanghae.hanghaeStudy.exception.UsernameNotFoundException;
 import com.hanghae.hanghaeStudy.repository.BoardRepository;
 import com.hanghae.hanghaeStudy.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -38,10 +40,13 @@ public class BoardService {
     @Transactional
     public BoardResponseDto save(BoardRequestDto boardRequestDto, String userName) {
         User user = userRepository.findByUsername(userName);
+        if(user == null){
+            throw new UsernameNotFoundException("사용자를 찾을 수 없습니다. : "+userName);
+        }
         boardRequestDto.setUser(user);
         Board board = boardRepository.save(Board.toEntity(boardRequestDto));
         if(board == null){
-            throw new RuntimeException();
+            throw new BoardSaveFailueException("게시글 등록에 실패하였습니다.");
         }
         return BoardResponseDto.toDto(board);
     }
