@@ -2,7 +2,7 @@ package com.hanghae.hanghaeStudy.service;
 
 import com.hanghae.hanghaeStudy.entity.Board;
 import com.hanghae.hanghaeStudy.entity.User;
-import com.hanghae.hanghaeStudy.exception.BoardSaveFailueException;
+import com.hanghae.hanghaeStudy.exception.BoardSaveFailureException;
 import com.hanghae.hanghaeStudy.exception.IncorrectPasswordException;
 import com.hanghae.hanghaeStudy.exception.UsernameNotFoundException;
 import com.hanghae.hanghaeStudy.repository.BoardRepository;
@@ -144,7 +144,7 @@ public class BoardServiceTest {
         when(boardRepository.save(any(Board.class))).thenReturn(null);
 
         // When & Then
-        BoardSaveFailueException exception = assertThrows(BoardSaveFailueException.class,
+        BoardSaveFailureException exception = assertThrows(BoardSaveFailureException.class,
                 ()-> boardService.save(requestDto, userName));
 
         assertEquals("게시글 등록에 실패하였습니다.", exception.getMessage());

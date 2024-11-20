@@ -1,5 +1,7 @@
 package com.hanghae.hanghaeStudy.handler;
 
+import com.hanghae.hanghaeStudy.exception.AlreadyExistUserException;
+import com.hanghae.hanghaeStudy.exception.BoardSaveFailureException;
 import com.hanghae.hanghaeStudy.exception.IncorrectPasswordException;
 import com.hanghae.hanghaeStudy.exception.UsernameNotFoundException;
 import com.hanghae.hanghaeStudy.response.ApiResponse;
@@ -14,8 +16,8 @@ import java.rmi.AlreadyBoundException;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler(AlreadyBoundException.class)
-    public ResponseEntity<ErrorResponse> handelAlreadyBoundException(AlreadyBoundException ex) {
+    @ExceptionHandler(AlreadyExistUserException.class)
+    public ResponseEntity<ErrorResponse> AlreadyExistUserException(AlreadyExistUserException ex) {
         ErrorResponse errorResponse = new ErrorResponse(HttpStatus.CONFLICT.value(), ex.getMessage());
         return new ResponseEntity<>(errorResponse, HttpStatus.CONFLICT);
     }
@@ -30,6 +32,12 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleIncorrectPasswordException(IncorrectPasswordException ex) {
         ErrorResponse errorResponse = new ErrorResponse(HttpStatus.BAD_REQUEST.value(), ex.getMessage());
         return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(BoardSaveFailureException.class)
+    public ResponseEntity<ErrorResponse> handleBoardSaveFailureException(BoardSaveFailureException ex) {
+        ErrorResponse errorResponse = new ErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR.value(), ex.getMessage());
+        return new ResponseEntity<>(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @ExceptionHandler(Exception.class)
