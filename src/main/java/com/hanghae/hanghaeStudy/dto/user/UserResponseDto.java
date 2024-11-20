@@ -1,11 +1,10 @@
 package com.hanghae.hanghaeStudy.dto.user;
 
 import com.hanghae.hanghaeStudy.entity.User;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class UserResponseDto {

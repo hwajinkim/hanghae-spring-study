@@ -5,7 +5,8 @@ import lombok.*;
 
 import java.time.LocalDateTime;
 
-@Data
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 public class BoardResponseDto {
@@ -15,7 +16,7 @@ public class BoardResponseDto {
     private String title;
     private String content;
     private LocalDateTime createdAt;
-    private LocalDateTime updatedAT;
+    private LocalDateTime updatedAt;
 
     public static BoardResponseDto toDto(Board board){
         return new BoardResponseDto(
