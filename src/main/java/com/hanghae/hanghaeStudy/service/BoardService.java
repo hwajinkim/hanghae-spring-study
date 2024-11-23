@@ -10,6 +10,7 @@ import com.hanghae.hanghaeStudy.exception.UsernameNotFoundException;
 import com.hanghae.hanghaeStudy.repository.BoardRepository;
 import com.hanghae.hanghaeStudy.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,7 +25,7 @@ public class BoardService {
 
     @Transactional(readOnly = true)
     public List<BoardResponseDto> findAll(){
-        List<Board> boards = boardRepository.findAll();
+        List<Board> boards = boardRepository.findAll(Sort.by(Sort.Direction.DESC, "createdAt"));
         return boards.stream()
                 .map(BoardResponseDto::toDto)
                 .collect(Collectors.toList());
