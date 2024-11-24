@@ -26,7 +26,7 @@ public class BoardController {
         return ApiResponse.success(ResponseCode.BOARD_ALL_READ_SUCCESS.getMessage(), boardResponseDtos);
     }
 
-    @GetMapping("/board/{id}")
+    @GetMapping("/boardDetail/{id}")
     public ApiResponse<BoardResponseDto> getBoardById(@PathVariable("id") Long id){
         BoardResponseDto boardResponseDto = boardService.findById(id);
         return ApiResponse.success(ResponseCode.BOARD_READ_SUCCESS.getMessage(), boardResponseDto);
