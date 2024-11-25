@@ -2,6 +2,8 @@ package com.hanghae.hanghaeStudy.config;
 
 import com.hanghae.hanghaeStudy.handler.JwtAccessDeniedHandler;
 import com.hanghae.hanghaeStudy.handler.JwtAuthenticationEntryPoint;
+import com.hanghae.hanghaeStudy.security.JwtFilter;
+import com.hanghae.hanghaeStudy.security.TokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
@@ -12,8 +14,10 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 @EnableWebSecurity
@@ -22,10 +26,11 @@ public class SecurityConfig {
 
     private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
     private final JwtAccessDeniedHandler jwtAccessDeniedHandler;
+    private final TokenProvider tokenProvider;
 
     @Bean
     public PasswordEncoder passwordEncoder(){
-        return new BCryptPasswordEncoder();
+        return PasswordEncoderFactories.createDelegatingPasswordEncoder();
     }
 
     @Bean
@@ -46,11 +51,13 @@ public class SecurityConfig {
             .authorizeHttpRequests(request -> request
                 .requestMatchers(PathRequest.toH2Console()).permitAll()
                 .requestMatchers("/api/auth/*").permitAll()
+                .requestMatchers("/api/signup").permitAll()
                 .requestMatchers("/api/boards").permitAll()
                 .requestMatchers("/api/boardDetail/*").permitAll()
                 .requestMatchers("/api/board").hasAnyRole("USER", "ADMIN")
                 .requestMatchers("/api/board/*").hasAnyRole("USER", "ADMIN")
-                .anyRequest().authenticated());
+                .anyRequest().authenticated())
+                .addFilterBefore(new JwtFilter(tokenProvider), UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
 

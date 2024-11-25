@@ -39,10 +39,8 @@ public class BoardService {
 
     @Transactional
     public BoardResponseDto save(BoardRequestDto boardRequestDto, String userName) {
-        User user = userRepository.findByUsername(userName);
-        if(user == null){
-            throw new UsernameNotFoundException("사용자를 찾을 수 없습니다. : "+userName);
-        }
+        User user = userRepository.findByUsername(userName)
+                .orElseThrow(()-> new UsernameNotFoundException("사용자를 찾을 수 없습니다. : "+userName));
         boardRequestDto.setUser(user);
         Board board = boardRepository.save(Board.toEntity(boardRequestDto));
         if(board == null){

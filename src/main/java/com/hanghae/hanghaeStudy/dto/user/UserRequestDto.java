@@ -7,6 +7,8 @@ import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 
+import java.util.List;
+
 
 @Getter
 @Setter
@@ -24,10 +26,13 @@ public class UserRequestDto {
     @Pattern(regexp = "^[a-zA-Z0-9]+$", message = "password는 알파벳 대소문자(a~z, A~Z)와 숫자(0~9)만 사용할 수 있습니다.")
     private String password;
 
+    private List<String> roles;
+
     public static UserRequestDto toDto(User user){
         return new UserRequestDto(
                 user.getUsername(),
-                user.getPassword()
+                user.getPassword(),
+                user.getRoles()
         );
     }
 }

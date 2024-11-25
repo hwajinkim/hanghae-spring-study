@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/auth")
+@RequestMapping("/api")
 @RequiredArgsConstructor
 public class UserController {
 
@@ -29,11 +29,5 @@ public class UserController {
     public ApiResponse<UserResponseDto> signup(@Valid @RequestBody UserRequestDto userRequestDto){
         UserResponseDto userResponseDto = userService.signup(userRequestDto);
         return ApiResponse.success(ResponseCode.USER_CREATE_SUCCESS.getMessage(), null);
-    }
-
-    @PostMapping("/signin")
-    public ApiResponse<UserResponseDto> signIn(@RequestBody UserRequestDto userRequestDto){
-        UserResponseDto userResponseDto = userService.signIn(userRequestDto);
-        return ApiResponse.success(ResponseCode.USER_LOGIN_SUCCESS.getMessage(), null);
     }
 }

@@ -25,3 +25,9 @@ spring:
         dialect: org.hibernate.dialect.H2Dialect
         format_sql: true
         show_sql: true
+
+# jwt
+jwt:
+  header: Authorization
+  secret: dfklWWHObhUWHEJKHhkjHWKXEHWUIEHXWUIWjhkjHJKWHEJWKeKEhjhKJHEWlhjkjklewkjkljkljewqnnjkbctjkwbtek
+  token-validity-in-seconds: 86400
