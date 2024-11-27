@@ -1,6 +1,7 @@
 package com.hanghae.hanghaeStudy.entity;
 
 import com.hanghae.hanghaeStudy.dto.board.BoardRequestDto;
+import com.hanghae.hanghaeStudy.dto.board.BoardUpdateDto;
 import com.hanghae.hanghaeStudy.entity.common.BaseEntity;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -40,8 +41,8 @@ public class Board extends BaseEntity {
         return new Board(null, boardRequestDto.getUser(), boardRequestDto.getTitle(), boardRequestDto.getContent());
     }
 
-    public void updateBoard(BoardRequestDto boardRequestDto){
-        this.title = boardRequestDto.getTitle();
-        this.content = boardRequestDto.getContent();
+    public void updateBoard(BoardUpdateDto boardUpdateDto){
+        this.title = boardUpdateDto.getTitle();
+        this.content = boardUpdateDto.getContent();
     }
 }
