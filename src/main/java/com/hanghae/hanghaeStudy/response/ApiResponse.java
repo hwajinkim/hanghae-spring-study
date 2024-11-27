@@ -1,10 +1,12 @@
 package com.hanghae.hanghaeStudy.response;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.hanghae.hanghaeStudy.dto.auth.TokenDto;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpHeaders;
 
 @JsonInclude(JsonInclude.Include.NON_NULL) // null 노출 x
 @AllArgsConstructor(access = AccessLevel.PRIVATE) // 접근 레벨 private
@@ -29,5 +31,4 @@ public class ApiResponse<T> {
     public static <T> ApiResponse<T> fail(ResponseCode responseCode, T data){
         return new ApiResponse<T>(responseCode.getHttpStatusCode(), "false", responseCode.getMessage(), data);
     }
-
 }
