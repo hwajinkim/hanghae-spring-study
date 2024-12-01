@@ -34,14 +34,12 @@ public class TokenProvider implements InitializingBean {
             @Value("${jwt.token-validity-in-seconds}") long tokenValidityInMilliseconds) {
         this.secret = secret;
         this.tokenValidityInMilliseconds = tokenValidityInMilliseconds * 1000;
-        byte[] keyBytes = Decoders.BASE64.decode(secret);
-        this.key = Keys.hmacShaKeyFor(keyBytes);
     }
 
     @Override
     public void afterPropertiesSet() throws Exception {
-        /*byte[] keyBytes = Decoders.BASE64.decode(secret);
-        this.key = Keys.hmacShaKeyFor(keyBytes);*/
+        byte[] keyBytes = Decoders.BASE64.decode(secret);
+        this.key = Keys.hmacShaKeyFor(keyBytes);
     }
 
     public TokenDto createToken(Authentication authentication){
@@ -51,37 +49,20 @@ public class TokenProvider implements InitializingBean {
                 .collect(Collectors.joining(","));
 
         // 만료시간 설정
-        /*long now = (new Date()).getTime();
+        long now = (new Date()).getTime();
         Date validity = new Date(now + this.tokenValidityInMilliseconds);
 
-        return Jwts.builder()
+         String jwt = Jwts.builder()
                 .setSubject(authentication.getName())
                 .claim(AUTHORITIES_KEY, authorities)
                 .signWith(key, SignatureAlgorithm.HS256)
                 .setIssuedAt(new Date())
                 .setExpiration(validity)
-                .compact();*/
-        long now = (new Date()).getTime();
-
-        // Access Token 생성
-        Date accessTokenExpiresIn = new Date(now + this.tokenValidityInMilliseconds);
-        String accessToken = Jwts.builder()
-                .setSubject(authentication.getName())
-                .claim("auth", authorities)
-                .setExpiration(accessTokenExpiresIn)
-                .signWith(key, SignatureAlgorithm.HS256)
-                .compact();
-
-        // Refresh Token 생성
-        String refreshToken = Jwts.builder()
-                .setExpiration(new Date(now + this.tokenValidityInMilliseconds))
-                .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
 
         return TokenDto.builder()
                 .grantType("Bearer")
-                .accessToken(accessToken)
-                .refreshToken(refreshToken)
+                .jwt(jwt)
                 .build();
     }
 

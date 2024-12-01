@@ -28,7 +28,7 @@ public class AuthController {
         TokenDto tokenDto = authService.signIn(signInRequestDto);
 
         HttpHeaders httpHeaders = new HttpHeaders();
-        httpHeaders.add(JwtFilter.AUTHORIZATION_HEADER, "Bearer " + tokenDto.getAccessToken());
+        httpHeaders.add(JwtFilter.AUTHORIZATION_HEADER, "Bearer " + tokenDto.getJwt());
         return new ResponseEntity<>(tokenDto, httpHeaders, HttpStatus.OK);
     }
 }
