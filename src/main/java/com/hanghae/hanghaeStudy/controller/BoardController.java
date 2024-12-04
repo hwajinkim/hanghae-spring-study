@@ -12,6 +12,8 @@ import com.hanghae.hanghaeStudy.service.BoardService;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.*;
 
@@ -39,16 +41,14 @@ public class BoardController {
 
     @PostMapping("/board")
     public ApiResponse<BoardResponseDto> boardPost(@RequestBody BoardRequestDto boardRequestDto, HttpServletRequest request){
-        // header accessToken에서 읽어올 예정
-        String authorizationHeader = request.getHeader("Authorization");
-        String username = "";
-        if(authorizationHeader != null && authorizationHeader.startsWith("Bearer ")){
-            String token = authorizationHeader.substring(7);
-            Claims claims = tokenProvider.parseClaims(token);
-            username = claims.getSubject();
+        // SecurityContextHolder 내 context에서 사용자 정보 읽어오기
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String userName = "";
+        if(principal instanceof UserDetails){
+            userName = ((UserDetails) principal).getUsername();
         }
 
-        BoardResponseDto boardResponseDto = boardService.save(boardRequestDto, username);
+        BoardResponseDto boardResponseDto = boardService.save(boardRequestDto, userName);
         return ApiResponse.success(ResponseCode.BOARD_CREATE_SUCCESS.getMessage(), boardResponseDto);
     }
 
