@@ -29,5 +29,5 @@ spring:
 # jwt
 jwt:
   header: Authorization
-  secret: dfklWWHObhUWHEJKHhkjHWKXEHWUIEHXWUIWjhkjHJKWHEJWKeKEhjhKJHEWlhjkjklewkjkljkljewqnnjkbctjkwbtek
+  secret: e36fd0343ba9b6d27f75b74d50843bf3d44715a1645f57583a11368acdee1239
   token-validity-in-seconds: 86400

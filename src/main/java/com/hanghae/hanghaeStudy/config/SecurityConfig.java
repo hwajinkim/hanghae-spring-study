@@ -54,8 +54,8 @@ public class SecurityConfig {
                 .requestMatchers("/api/signup").permitAll()
                 .requestMatchers("/api/boards").permitAll()
                 .requestMatchers("/api/boardDetail/*").permitAll()
-                .requestMatchers("/api/board").permitAll()
-                .requestMatchers("/api/board/*").permitAll()
+                .requestMatchers("/api/board").hasAnyRole("USER", "ADMIN")
+                .requestMatchers("/api/board/*").hasAnyRole("USER", "ADMIN")
                 .anyRequest().authenticated())
                 .addFilterBefore(new JwtFilter(tokenProvider), UsernamePasswordAuthenticationFilter.class);
         return http.build();

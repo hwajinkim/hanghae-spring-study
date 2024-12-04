@@ -23,8 +23,6 @@ import java.util.stream.Collectors;
 @Slf4j
 @Component
 public class TokenProvider implements InitializingBean {
-
-    private static final String AUTHORITIES_KEY = "auth";
     private final String secret;
     private final long tokenValidityInMilliseconds;
     private Key key;
@@ -54,9 +52,8 @@ public class TokenProvider implements InitializingBean {
 
          String jwt = Jwts.builder()
                 .setSubject(authentication.getName())
-                .claim(AUTHORITIES_KEY, authorities)
+                .claim("auth", authorities)
                 .signWith(key, SignatureAlgorithm.HS256)
-                .setIssuedAt(new Date())
                 .setExpiration(validity)
                 .compact();
 
@@ -73,7 +70,7 @@ public class TokenProvider implements InitializingBean {
 
         // Claims 에 들어있는 권한들을 가져옴.
         Collection<? extends GrantedAuthority> authorities =
-                Arrays.stream(claims.get(AUTHORITIES_KEY).toString().split(","))
+                Arrays.stream(claims.get("auth").toString().split(","))
                         .map(SimpleGrantedAuthority::new)
                         .collect(Collectors.toList());
 
@@ -88,14 +85,14 @@ public class TokenProvider implements InitializingBean {
             Jwts.parserBuilder()
                     .setSigningKey(key)
                     .build()
-                    .parseClaimsJwt(token);
+                    .parseClaimsJws(token);
             return true;
         } catch (SecurityException | MalformedJwtException e){
             log.info("잘못된 JWT 서명입니다.");
         } catch (ExpiredJwtException e){
             log.info("만료된 JWT 토큰입니다.");
         } catch (UnsupportedJwtException e){
-            log.info("지원되지 않는 JWT 토큰입니다.");
+            log.info("지원되지 않는 JWT 토큰입니다."+ e.getMessage());
         } catch (IllegalArgumentException e){
             log.info("JWT 토큰이 잘못되었습니다.");
         }
