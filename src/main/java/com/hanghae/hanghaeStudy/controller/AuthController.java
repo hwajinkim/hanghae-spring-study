@@ -2,6 +2,8 @@ package com.hanghae.hanghaeStudy.controller;
 
 import com.hanghae.hanghaeStudy.dto.auth.SignInRequestDto;
 import com.hanghae.hanghaeStudy.dto.auth.TokenDto;
+import com.hanghae.hanghaeStudy.dto.user.UserResponseDto;
+import com.hanghae.hanghaeStudy.response.ApiResponse;
 import com.hanghae.hanghaeStudy.response.ResponseCode;
 import com.hanghae.hanghaeStudy.security.JwtFilter;
 import com.hanghae.hanghaeStudy.service.AuthService;
@@ -23,12 +25,14 @@ public class AuthController {
 
     private final AuthService authService;
     @PostMapping("/signin")
-    public ResponseEntity<TokenDto> signIn(@Valid @RequestBody SignInRequestDto signInRequestDto){
+    public ResponseEntity<ApiResponse<TokenDto>> signIn(@Valid @RequestBody SignInRequestDto signInRequestDto){
 
         TokenDto tokenDto = authService.signIn(signInRequestDto);
+        ApiResponse<TokenDto> response = ApiResponse.success(ResponseCode.USER_LOGIN_SUCCESS.getMessage(), tokenDto.getJwt());
 
-        HttpHeaders httpHeaders = new HttpHeaders();
-        httpHeaders.add(JwtFilter.AUTHORIZATION_HEADER, "Bearer " + tokenDto.getJwt());
-        return new ResponseEntity<>(tokenDto, httpHeaders, HttpStatus.OK);
+        return ResponseEntity
+                .status(response.getStatusCode())
+                .headers(response.getHttpHeaders())
+                .body(response);
     }
 }
