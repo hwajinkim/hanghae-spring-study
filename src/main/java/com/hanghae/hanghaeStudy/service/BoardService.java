@@ -29,7 +29,7 @@ public class BoardService {
 
     @Transactional(readOnly = true)
     public List<BoardResponseDto> findAll(){
-        List<Board> boards = boardRepository.findAll();
+        List<Board> boards = boardRepository.findAll(Sort.by(Sort.Direction.DESC, "createdAt"));
         return boards.stream()
                 .map(BoardResponseDto::toDto)
                 .collect(Collectors.toList());
