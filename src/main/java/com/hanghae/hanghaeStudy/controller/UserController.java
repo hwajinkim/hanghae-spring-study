@@ -28,6 +28,6 @@ public class UserController {
     @PostMapping("/signup")
     public ApiResponse<UserResponseDto> signup(@Valid @RequestBody UserRequestDto userRequestDto){
         UserResponseDto userResponseDto = userService.signup(userRequestDto);
-        return ApiResponse.success(ResponseCode.USER_CREATE_SUCCESS.getMessage(), null);
+        return ApiResponse.success(ResponseCode.USER_CREATE_SUCCESS.getMessage());
     }
 }
