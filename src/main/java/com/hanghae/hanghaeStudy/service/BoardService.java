@@ -1,7 +1,9 @@
 package com.hanghae.hanghaeStudy.service;
 
+import com.hanghae.hanghaeStudy.dto.board.BoardDeleteDto;
 import com.hanghae.hanghaeStudy.dto.board.BoardRequestDto;
 import com.hanghae.hanghaeStudy.dto.board.BoardResponseDto;
+import com.hanghae.hanghaeStudy.dto.board.BoardUpdateDto;
 import com.hanghae.hanghaeStudy.entity.Board;
 import com.hanghae.hanghaeStudy.entity.User;
 import com.hanghae.hanghaeStudy.exception.BoardSaveFailureException;
@@ -10,7 +12,7 @@ import com.hanghae.hanghaeStudy.exception.UsernameNotFoundException;
 import com.hanghae.hanghaeStudy.repository.BoardRepository;
 import com.hanghae.hanghaeStudy.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Sort;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,6 +24,8 @@ import java.util.stream.Collectors;
 public class BoardService {
     private final BoardRepository boardRepository;
     private final UserRepository userRepository;
+    private final PasswordEncoder encoder;
+
 
     @Transactional(readOnly = true)
     public List<BoardResponseDto> findAll(){
@@ -40,10 +44,8 @@ public class BoardService {
 
     @Transactional
     public BoardResponseDto save(BoardRequestDto boardRequestDto, String userName) {
-        User user = userRepository.findByUsername(userName);
-        if(user == null){
-            throw new UsernameNotFoundException("사용자를 찾을 수 없습니다. : "+userName);
-        }
+        User user = userRepository.findByUsername(userName)
+                .orElseThrow(()-> new UsernameNotFoundException("사용자를 찾을 수 없습니다. : "+userName));
         boardRequestDto.setUser(user);
         Board board = boardRepository.save(Board.toEntity(boardRequestDto));
         if(board == null){
@@ -53,21 +55,23 @@ public class BoardService {
     }
 
     @Transactional
-    public BoardResponseDto update(Long id, BoardRequestDto boardRequestDto, String password) {
+    public BoardResponseDto update(Long id, BoardUpdateDto boardUpdateDto) {
         Board board = boardRepository.findById(id).orElseThrow(RuntimeException::new);
-        if(!board.getUser().getPassword().equals(password)){
-            throw new IncorrectPasswordException("비밀번호가 일치하지 않습니다.");
+
+        if(!encoder.matches(boardUpdateDto.getPassword(), board.getUser().getPassword())){
+            throw new IncorrectPasswordException("비밀번호가 일치하지 않습니다.:  "+boardUpdateDto.getPassword());
         }
 
-        board.updateBoard(boardRequestDto);
+        board.updateBoard(boardUpdateDto);
         return BoardResponseDto.toDto(board);
     }
 
     @Transactional
-    public void delete(Long id, String password) {
+    public void delete(Long id, BoardDeleteDto boardDeleteDto) {
         Board board = boardRepository.findById(id).orElseThrow(RuntimeException::new);
-        if(!board.getUser().getPassword().equals(password)){
-            throw new IncorrectPasswordException("비밀번호가 일치하지 않습니다.");
+
+        if(!encoder.matches(boardDeleteDto.getPassword(), board.getUser().getPassword())){
+            throw new IncorrectPasswordException("비밀번호가 일치하지 않습니다.:  "+boardDeleteDto.getPassword());
         }
 
         boardRepository.delete(board);
