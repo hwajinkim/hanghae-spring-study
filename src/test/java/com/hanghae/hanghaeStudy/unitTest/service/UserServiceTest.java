@@ -12,6 +12,12 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -23,13 +29,20 @@ public class UserServiceTest {
     @InjectMocks
     private UserService userService;
 
+    private PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+
     @Test
     @DisplayName("회원가입 성공 테스트")
     void signupSuccess(){
         // Given
-        UserRequestDto requestDto = new UserRequestDto("testUser2", "password123!");
-        User mockUser = User.toEntity(requestDto);
-        User savedUser = new User( 1L,"testUser2", "password123");
+        String role = "USER";
+
+        List<String> roles = new ArrayList<>();
+        roles.add(role);
+
+        UserRequestDto requestDto = new UserRequestDto("testUser2", "password123!", roles);
+        String encPassword = passwordEncoder.encode(requestDto.getPassword());
+        User savedUser = new User( 1L,"testUser2", encPassword, roles);
 
         when(userRepository.existsByUsername(requestDto.getUsername())).thenReturn(false);
         when(userRepository.save(any(User.class))).thenReturn(savedUser);
@@ -45,7 +58,12 @@ public class UserServiceTest {
     @DisplayName("회원가입 실패 테스트 - 이미 존재하는 사용자")
     void signupFail_UserAlreadyExists(){
         // Given
-        UserRequestDto requestDto = new UserRequestDto( "testUser", "password123!");
+        String role = "USER";
+
+        List<String> roles = new ArrayList<>();
+        roles.add(role);
+
+        UserRequestDto requestDto = new UserRequestDto( "testUser", "password123!", roles);
 
         when(userRepository.existsByUsername(requestDto.getUsername())).thenReturn(true);
         // When

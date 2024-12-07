@@ -1,5 +1,7 @@
 package com.hanghae.hanghaeStudy.service;
 
+import com.hanghae.hanghaeStudy.dto.board.BoardDeleteDto;
+import com.hanghae.hanghaeStudy.dto.board.BoardUpdateDto;
 import com.hanghae.hanghaeStudy.entity.Board;
 import com.hanghae.hanghaeStudy.entity.User;
 import com.hanghae.hanghaeStudy.exception.BoardSaveFailureException;
@@ -15,6 +17,8 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import com.hanghae.hanghaeStudy.dto.board.BoardResponseDto;
 import com.hanghae.hanghaeStudy.dto.board.BoardRequestDto;
+
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -38,7 +42,9 @@ public class BoardServiceTest {
     @DisplayName("모든 게시글 조회 성공 테스트")
     void findAllSuccess(){
         // Given
-        User mockUser = new User( 1L,"testUser", "password123!");
+        List<String> roles = new ArrayList<>();
+        roles.add("USER");
+        User mockUser = new User( 1L,"testUser", "password123!", roles);
 
         List<Board> mockBoards = List.of(
                 new Board(1L, mockUser,"title 1", "content1"),
@@ -61,7 +67,9 @@ public class BoardServiceTest {
     @DisplayName("특정 게시글 조회 성공 테스트")
     void findByIdSuccess(){
         // Given
-        User mockUser = new User( 1L,"testUser", "password123!");
+        List<String> roles = new ArrayList<>();
+        roles.add("USER");
+        User mockUser = new User( 1L,"testUser", "password123!", roles);
         Long boardId = 1L;
         Board mockBoard = new Board(boardId, mockUser, "title 1", "content 1");
 
@@ -97,11 +105,13 @@ public class BoardServiceTest {
     void saveSuccess(){
         // Given
         String userName = "testUser";
-        User mockUser = new User(1L, "testUser", "password123!");
+        List<String> roles = new ArrayList<>();
+        roles.add("USER");
+        User mockUser = new User(1L, "testUser", "password123!", roles);
         BoardRequestDto requestDto = new BoardRequestDto( "title", "content", mockUser);
         Board mockBoard = new Board(1L, mockUser, "title", "content");
 
-        when(userRepository.findByUsername(userName)).thenReturn(mockUser);
+        when(userRepository.findByUsername(userName)).thenReturn(Optional.of(mockUser));
         when(boardRepository.save(any(Board.class))).thenReturn(mockBoard);
 
         // When
@@ -137,10 +147,12 @@ public class BoardServiceTest {
     void saveFailure_BoardSaveFailure(){
         // Given
         String userName = "testUser";
-        User mockUser = new User(1L, "testUser", "password123!");
+        List<String> roles = new ArrayList<>();
+        roles.add("USER");
+        User mockUser = new User(1L, "testUser", "password123!", roles);
         BoardRequestDto requestDto = new BoardRequestDto( "title", "content", mockUser);
 
-        when(userRepository.findByUsername(userName)).thenReturn(mockUser);
+        when(userRepository.findByUsername(userName)).thenReturn(Optional.of(mockUser));
         when(boardRepository.save(any(Board.class))).thenReturn(null);
 
         // When & Then
@@ -158,14 +170,16 @@ public class BoardServiceTest {
         // Given
         Long boardId = 1L;
         String password = "password123!";
-        User mockUser = new User(1L, "testUser", password);
+        List<String> roles = new ArrayList<>();
+        roles.add("USER");
+        User mockUser = new User(1L, "testUser", password, roles);
         Board mockBoard = new Board(boardId, mockUser, "Old title", "Old content");
-        BoardRequestDto updateDto = new BoardRequestDto("Updated title", "Updated content", mockUser);
+        BoardUpdateDto updateDto = new BoardUpdateDto("Updated title", "Updated content", password);
 
         when(boardRepository.findById(boardId)).thenReturn(Optional.of(mockBoard));
 
         // When
-        BoardResponseDto responseDto = boardService.update(boardId, updateDto, password);
+        BoardResponseDto responseDto = boardService.update(boardId, updateDto);
 
         assertNotNull(responseDto);
         assertEquals("Updated title", responseDto.getTitle());
@@ -179,15 +193,18 @@ public class BoardServiceTest {
         Long boardId = 1L;
         String correctPassword = "password123!";
         String wrongPassword = "wrongPassword";
-        User mockUser = new User(1L, "testUser", correctPassword);
+
+        List<String> roles = new ArrayList<>();
+        roles.add("USER");
+        User mockUser = new User(1L, "testUser", correctPassword, roles);
         Board mockBoard = new Board(boardId, mockUser, "Old title", "Old content");
-        BoardRequestDto updateDto = new BoardRequestDto("Updated title", "Updated content", mockUser);
+        BoardUpdateDto updateDto = new BoardUpdateDto("Updated title", "Updated content", wrongPassword);
 
         when(boardRepository.findById(boardId)).thenReturn(Optional.of(mockBoard));
 
         // When & Then
         IncorrectPasswordException exception = assertThrows(IncorrectPasswordException.class,
-                () -> boardService.update(boardId, updateDto, wrongPassword));
+                () -> boardService.update(boardId, updateDto));
 
         assertEquals("비밀번호가 일치하지 않습니다.", exception.getMessage());
         verify(boardRepository, times(1)).findById(boardId);
@@ -199,13 +216,18 @@ public class BoardServiceTest {
         // Given
         Long boardId = 1L;
         String password = "password123!";
-        User mockUser = new User(1L, "testUser", password);
+
+        List<String> roles = new ArrayList<>();
+        roles.add("USER");
+
+        User mockUser = new User(1L, "testUser", password, roles);
         Board mockBoard = new Board(boardId, mockUser, "title", "content");
+        BoardDeleteDto deleteDto = new BoardDeleteDto(password);
 
         when(boardRepository.findById(boardId)).thenReturn(Optional.of(mockBoard));
 
         // When
-        boardService.delete(boardId, password);
+        boardService.delete(boardId, deleteDto);
 
         // Then
         verify(boardRepository, times(1)).findById(boardId);
@@ -219,14 +241,19 @@ public class BoardServiceTest {
         Long boardId = 1L;
         String correctPassword = "password123!";
         String wrongPassword = "wrongPassword";
-        User mockUser = new User(1L, "testUser", correctPassword);
+
+        List<String> roles = new ArrayList<>();
+        roles.add("USER");
+
+        User mockUser = new User(1L, "testUser", correctPassword, roles);
         Board mockBoard = new Board(boardId, mockUser, "title", "content");
+        BoardDeleteDto deleteDto = new BoardDeleteDto(wrongPassword);
 
         when(boardRepository.findById(boardId)).thenReturn(Optional.of(mockBoard));
 
         // When & Then
         IncorrectPasswordException exception = assertThrows(IncorrectPasswordException.class,
-                () -> boardService.delete(boardId, wrongPassword));
+                () -> boardService.delete(boardId, deleteDto));
 
         assertEquals("비밀번호가 일치하지 않습니다.", exception.getMessage());
         verify(boardRepository, times(1)).findById(boardId);
