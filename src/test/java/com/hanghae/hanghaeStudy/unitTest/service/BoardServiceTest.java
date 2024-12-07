@@ -1,4 +1,4 @@
-package com.hanghae.hanghaeStudy.service;
+package com.hanghae.hanghaeStudy.unitTest.service;
 
 import com.hanghae.hanghaeStudy.dto.board.BoardDeleteDto;
 import com.hanghae.hanghaeStudy.dto.board.BoardUpdateDto;
@@ -9,6 +9,7 @@ import com.hanghae.hanghaeStudy.exception.IncorrectPasswordException;
 import com.hanghae.hanghaeStudy.exception.UsernameNotFoundException;
 import com.hanghae.hanghaeStudy.repository.BoardRepository;
 import com.hanghae.hanghaeStudy.repository.UserRepository;
+import com.hanghae.hanghaeStudy.service.BoardService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
