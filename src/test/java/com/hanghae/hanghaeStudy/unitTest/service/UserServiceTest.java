@@ -38,11 +38,6 @@ public class UserServiceTest {
     @Mock
     private PasswordEncoder passwordEncoder;
 
-    @BeforeEach
-    public void init(){
-        passwordEncoder = new BCryptPasswordEncoder();
-    }
-
     @Nested
     @DisplayName("회원가입")
     class SignUp {
