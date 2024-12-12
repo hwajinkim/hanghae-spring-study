@@ -30,7 +30,7 @@ public class AuthControllerTest extends BaseIntegrationTest{
         //given
         String username="hwajin00";
         String password="hwajin1234";
-        long userId = userSetUp.saveUser(username, password, List.of("USER"));
+        User user = userSetUp.saveUser(username, password, List.of("USER"));
 
         SignInRequestDto signInRequestDto = new SignInRequestDto(username, password);
 

@@ -16,12 +16,12 @@ public class UserSetUp {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    public Long saveUser(String userName, String password, List<String> roles){
+    public User saveUser(String userName, String password, List<String> roles){
         User user = User.builder()
                 .username(userName)
                 .password(passwordEncoder.encode(password))
                 .roles(roles)
                 .build();
-        return userRepository.save(user).getId();
+        return userRepository.save(user);
     }
 }
